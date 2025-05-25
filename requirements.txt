@@ -1,0 +1,7 @@
+pandas
+wikipedia
+tqdm
+unidecode
+faiss-cpu
+sentence-transformers
+streamlit

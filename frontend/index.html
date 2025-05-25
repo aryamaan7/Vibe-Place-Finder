@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Place Vibes Finder</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>🌍 Place Vibes Finder</h1>
+    <input id="query" type="text" placeholder="Describe your vibe..." />
+    <button onclick="search()">Find Places</button>
+    <div id="results"></div>
+  </div>
+
+  <script>
+    async function search() {
+      const prompt = document.getElementById("query").value;
+      const resDiv = document.getElementById("results");
+      resDiv.innerHTML = "Loading...";
+      const response = await fetch("http://localhost:8000/search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: prompt, top_k: 15 }),
+      });
+      const data = await response.json();
+      resDiv.innerHTML = "";
+      data.results.forEach((item, idx) => {
+        resDiv.innerHTML += `
+          <div class="result">
+            <h3>${idx + 1}. ${item.label}</h3>
+            <p>${item.description}</p>
+            <a href="${item.article_url}" target="_blank">Read more →</a>
+          </div>
+        `;
+      });
+    }
+  </script>
+</body>
+</html>

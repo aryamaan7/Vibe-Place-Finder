@@ -1,0 +1,44 @@
+/data/state_articles.json 
+/data/us_locations_vibes.csv
+
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.env
+.venv/
+venv/
+place-finder-venv/
+Pipfile.lock
+poetry.lock
+
+# Jupyter / notebooks
+.ipynb_checkpoints/
+
+# VS Code
+.vscode/
+
+# Logs & outputs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Frontend static server
+node_modules/
+*.cache
+*.lock
+*.bak
+
+# Data and embeddings (use Git LFS)
+*.faiss
+*.pkl
+
+# Git LFS pointer file
+.gitattributes
