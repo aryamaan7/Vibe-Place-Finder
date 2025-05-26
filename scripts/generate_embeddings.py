@@ -12,7 +12,7 @@ def embed_texts(texts, model):
     return model.encode(texts, show_progress_bar=True, normalize_embeddings=True)
 
 def main():
-    input_path = "data/us_locations_vibes.csv"
+    input_path = "data/us_location_vibes.csv"
     df = pd.read_csv(input_path)
     df["label"] = df["Location"] + ", " + df["state"]
     model = SentenceTransformer(MODEL_NAME)
@@ -28,7 +28,7 @@ def main():
     faiss.write_index(index, "data/location_embeddings.faiss")
 
     metadata = df[["label", "description", "article_url"]].to_dict(orient="records")
-    with open("data/location_metadata.pkl", "wb") as f:
+    with open("data/_metadata.pkl", "wb") as f:
         pickle.dump(metadata, f)
 
     print(f"✅ Saved {len(df)} vectors to FAISS and metadata to .pkl")

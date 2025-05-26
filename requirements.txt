@@ -5,3 +5,4 @@ unidecode
 faiss-cpu
 sentence-transformers
 streamlit
+dotenv

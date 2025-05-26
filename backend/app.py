@@ -1,36 +1,47 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import requests
 import faiss
 import pickle
 import numpy as np
 from sentence_transformers import SentenceTransformer
-import os
+import io
+import os 
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
-CORS(app) 
+CORS(app)
+
 
 model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(BASE_DIR, "..", "data")
 
-index = faiss.read_index(os.path.join(DATA_DIR, "location_embeddings.faiss"))
-with open(os.path.join(DATA_DIR, "location_metadata.pkl"), "rb") as f:
-    metadata = pickle.load(f)
+FAISS_URL = os.environ["FAISS_URL"]
+PKL_URL   = os.environ["PKL_URL"]
+
+
+faiss_resp = requests.get(FAISS_URL)
+faiss_resp.raise_for_status()
+faiss_bytes = faiss_resp.content
+faiss_arr = np.frombuffer(faiss_bytes, dtype='uint8')
+index = faiss.deserialize_index(faiss_arr)
+
+pkl_resp = requests.get(PKL_URL)
+pkl_resp.raise_for_status()
+metadata = pickle.loads(pkl_resp.content)
+
 
 @app.route("/search", methods=["POST"])
 def search():
     data = request.get_json()
     prompt = data.get("prompt", "")
-    top_k = data.get("top_k", 15)
+    top_k = data.get("top_k", 10)
 
-    vec = model.encode([prompt], normalize_embeddings=True)
-    vec = np.array(vec).astype("float32")
+    vec = model.encode([prompt], normalize_embeddings=True).astype("float32")
     scores, indices = index.search(vec, top_k)
 
-    results = []
-    for idx in indices[0]:
-        results.append(metadata[idx])
-
+    results = [metadata[i] for i in indices[0]]
     return jsonify({"results": results})
 
 if __name__ == "__main__":
