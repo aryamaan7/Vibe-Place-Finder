@@ -7,9 +7,7 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 import io
 import os 
-from dotenv import load_dotenv
 
-load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
